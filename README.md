@@ -1,2 +1,4 @@
-# phire-entities
-Entities module for Phire CMS 2.0
+Phire Entities Module
+=====================
+
+Entities module for Phire CMS 2
