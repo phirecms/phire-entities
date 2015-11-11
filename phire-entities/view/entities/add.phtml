@@ -1,0 +1,10 @@
+<?php include $phireHeader; ?>
+    <h1 class="entities-header"><?=$title; ?></h1>
+    <nav id="sub-nav">
+<?php if ($acl->isAllowed($user->role, 'entities', 'add')): ?>
+        <nav><a href="<?=$phireUri; ?>/entities/add">+ Add</a></nav>
+<?php endif; ?>
+        <nav><a href="<?=$phireUri; ?>/entities">Back</a></nav>
+    </nav>
+<?=$form; ?>
+<?php include $phireFooter; ?>

@@ -1,0 +1,82 @@
+/**
+ * Entities Module Style Sheet for Phire CMS 2
+ */
+
+#entity-form {
+    margin: 10px auto 10px auto;
+    padding: 15px 0 15px 0;
+    width: 100%;
+    min-height: 460px;
+    border-top: solid 1px #ccc;
+}
+
+#entity-form > dl:first-child {
+    margin: 0 0 0 20px;
+    padding: 0 0 0 20px;
+    width: 160px;
+    border-left: solid 1px #ccc;
+    float: right;
+    min-height: 525px;
+    height: 100%;
+}
+
+#entity-form > dl:first-child > dt {
+    width: 100%;
+}
+
+#entity-form > dl:first-child > dt {
+    margin: 0 0 5px 0;
+    border-bottom: dotted 1px #aaa;
+}
+
+#entity-form-field-group-1 > dd:first-child {
+    width: 160px;
+}
+
+#entity-form-field-group-2 {
+    width: calc(100% - 220px);
+}
+
+#entity-form-field-group-2 > dt {
+    width: 98%;
+    padding-left: 4px;
+}
+
+#entity-form-field-group-2 > dd {
+    width: 98%;
+    padding-left: 4px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: solid 1px #ccc;
+}
+
+#entity-form-field-group-3 {
+    float: left;
+    margin: 10px 20px 10px 0;
+    padding: 10px 20px 10px 0;
+    border-right: solid 1px #ccc;
+}
+
+#entity-form-field-group-4 {
+    float: left;
+    margin: 10px 0 10px 0;
+    padding: 10px 0 10px 0;
+}
+
+#entity-form-field-group-3 > dt, #entity-form-field-group-3 > dd, #entity-form-field-group-4 > dt, #entity-form-field-group-4 > dd {
+    padding-left: 4px;
+}
+
+.entities-nav-icon {
+    background-image: url(../img/entities-icon-sm.png);
+    background-position: 8px center;
+    background-repeat: no-repeat;
+}
+
+.entities-header {
+    margin: 10px 0 10px 0;
+    padding: 10px 0 10px 40px;
+    background-image: url(../img/entities-icon-lg.png);
+    background-position: left center;
+    background-repeat: no-repeat;
+}

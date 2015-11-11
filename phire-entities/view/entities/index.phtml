@@ -1,0 +1,46 @@
+<?php include $phireHeader; ?>
+    <h1 class="entities-header"><?=$title; ?></h1>
+<?php if (count($entities) > 0): ?>
+<?php if (null !== $pages): ?>
+    <div class="page-links"><?=$pages; ?></div>
+<?php endif; ?>
+<?php if ($acl->isAllowed($user->role, 'entities', 'add')): ?>
+    <nav id="sub-nav">
+        <nav><a href="<?=$phireUri; ?>/entities/add">+ Add</a></nav>
+    </nav>
+<?php endif; ?>
+<?php if ($acl->isAllowed($user->role, 'entities', 'remove')): ?>
+    <form id="entities-form" action="<?=$phireUri . '/entities/remove'; ?>" method="post">
+<?php endif; ?>
+        <table class="data-table" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <th><a href="<?=$phireUri . '/entities?sort=id';?>">#</a></th>
+                <th><a href="<?=$phireUri . '/entities?sort=name';?>">Name</a></th>
+                <th># of Fields</th>
+                <th class="text-center"><?php if ($acl->isAllowed($user->role, 'entities', 'edit')): ?>Edit<?php else: ?>&nbsp;<?php endif; ?></th>
+                <th class="text-center"><?php if ($acl->isAllowed($user->role, 'entities', 'remove')): ?><input type="checkbox" name="checkall" id="checkall" value="rm_entities" /><?php else: ?>&nbsp;<?php endif; ?></th>
+            </tr>
+<?php $i = 1; ?>
+<?php foreach ($entities as $form): ?>
+            <tr>
+                <td><?=$form->id; ?></td>
+                <td><?=$form->name; ?></td>
+                <td><?=$form->num_of_fields; ?></td>
+                <td><?php if ($acl->isAllowed($user->role, 'entities', 'edit')): ?><a class="edit-link" href="<?=$phireUri . '/entities/edit/' . $form->id; ?>">Edit</a><?php else: ?>&nbsp;<?php endif; ?></td>
+                <td class="text-center"><?php if ($acl->isAllowed($user->role, 'entities', 'remove')): ?><input type="checkbox" name="rm_entities[]" id="rm_entities<?=$i++; ?>" value="<?=$form->id; ?>" /><?php else: ?>&nbsp;<?php endif; ?></td>
+            </tr>
+<?php endforeach; ?>
+        </table>
+<?php if ($acl->isAllowed($user->role, 'entities', 'remove')): ?>
+        <div id="form-footer"><input type="submit" name="submit" class="process-btn" value="Remove" /></div>
+    </form>
+<?php endif; ?>
+<?php else: ?>
+<?php if ($acl->isAllowed($user->role, 'entities', 'add')): ?>
+    <nav id="sub-nav">
+        <nav><a href="<?=$phireUri; ?>/entities/add">+ Add</a></nav>
+    </nav>
+<?php endif; ?>
+    <p>There are currently no entities.</p>
+<?php endif; ?>
+<?php include $phireFooter; ?>
