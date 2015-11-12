@@ -33,6 +33,38 @@ return [
                 'resource'   => 'entities',
                 'permission' => 'remove'
             ]
+        ],
+        '/entities/types[/]' => [
+            'controller' => 'Phire\Entities\Controller\TypeController',
+            'action'     => 'index',
+            'acl'        => [
+                'resource'   => 'entity-types',
+                'permission' => 'index'
+            ]
+        ],
+        '/entities/types/add[/]' => [
+            'controller' => 'Phire\Entities\Controller\TypeController',
+            'action'     => 'add',
+            'acl'        => [
+                'resource'   => 'entity-types',
+                'permission' => 'add'
+            ]
+        ],
+        '/entities/types/edit/:id' => [
+            'controller' => 'Phire\Entities\Controller\TypeController',
+            'action'     => 'edit',
+            'acl'        => [
+                'resource'   => 'entity-types',
+                'permission' => 'edit'
+            ]
+        ],
+        '/entities/types/remove[/]' => [
+            'controller' => 'Phire\Entities\Controller\TypeController',
+            'action'     => 'remove',
+            'acl'        => [
+                'resource'   => 'entity-types',
+                'permission' => 'remove'
+            ]
         ]
     ]
 ];

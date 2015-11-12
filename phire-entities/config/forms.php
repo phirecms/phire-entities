@@ -26,7 +26,7 @@ return [
                 ]
             ]
         ]
-    ]
+    ],
     'Phire\Entities\Form\EntityType' => [
         [
             'submit' => [

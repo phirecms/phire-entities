@@ -7,7 +7,7 @@
  */
 return [
     'phire-entities' => [
-        'prefix'     => 'Phire\Forms\\',
+        'prefix'     => 'Phire\Entities\\',
         'src'        => __DIR__ . '/../src',
         'routes'     => include 'routes.php',
         'resources'  => include 'resources.php',

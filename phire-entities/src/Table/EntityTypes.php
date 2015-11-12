@@ -4,7 +4,7 @@ namespace Phire\Entities\Table;
 
 use Pop\Db\Record;
 
-class EntityType extends Record
+class EntityTypes extends Record
 {
 
     /**

@@ -1,11 +1,11 @@
 <?php
 
-namespace Phire\EntityTypes\Model;
+namespace Phire\Entities\Model;
 
 use Phire\Entities\Table;
 use Phire\Model\AbstractModel;
 
-class Form extends AbstractModel
+class EntityType extends AbstractModel
 {
 
     /**
