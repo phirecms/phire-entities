@@ -11,15 +11,14 @@ class EntityType extends AbstractModel
     /**
      * Get all entity types
      *
-     * @param  int                 $limit
-     * @param  int                 $page
-     * @param  string              $sort
-     * @param  \Pop\Module\Manager $modules
+     * @param  int    $limit
+     * @param  int    $page
+     * @param  string $sort
      * @return array
      */
-    public function getAll($limit = null, $page = null, $sort = null, \Pop\Module\Manager $modules = null)
+    public function getAll($limit = null, $page = null, $sort = null)
     {
-        $order = (null !== $sort) ? $this->getSortOrder($sort, $page) : 'id ASC';
+        $order = (null !== $sort) ? $this->getSortOrder($sort, $page) : 'order ASC';
 
         if (null !== $limit) {
             $page = ((null !== $page) && ((int)$page > 1)) ?
@@ -61,7 +60,9 @@ class EntityType extends AbstractModel
     public function save(array $fields)
     {
         $type = new Table\EntityTypes([
-            'name' => $fields['name']
+            'name'      => $fields['name'],
+            'order'     => (int)$fields['order'],
+            'field_num' => (int)$fields['field_num']
         ]);
         $type->save();
 
@@ -78,7 +79,9 @@ class EntityType extends AbstractModel
     {
         $type = Table\EntityTypes::findById((int)$fields['id']);
         if (isset($type->id)) {
-            $type->name = $fields['name'];
+            $type->name      = $fields['name'];
+            $type->order     = (int)$fields['order'];
+            $type->field_num = (int)$fields['field_num'];
             $type->save();
 
             $this->data = array_merge($this->data, $type->getColumns());

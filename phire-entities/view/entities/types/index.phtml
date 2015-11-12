@@ -18,15 +18,15 @@
                 <th><a href="<?=$phireUri . '/entities/types?sort=id';?>">#</a></th>
                 <th><a href="<?=$phireUri . '/entities/types?sort=name';?>">Name</a></th>
                 <th class="text-center"><?php if ($acl->isAllowed($user->role, 'entity-types', 'edit')): ?>Edit<?php else: ?>&nbsp;<?php endif; ?></th>
-                <th class="text-center"><?php if ($acl->isAllowed($user->role, 'entity-types', 'remove')): ?><input type="checkbox" name="checkall" id="checkall" value="rm_content_types" /><?php else: ?>&nbsp;<?php endif; ?></th>
+                <th class="text-center"><?php if ($acl->isAllowed($user->role, 'entity-types', 'remove')): ?><input type="checkbox" name="checkall" id="checkall" value="rm_entity_types" /><?php else: ?>&nbsp;<?php endif; ?></th>
             </tr>
 <?php $i = 1; ?>
 <?php foreach ($types as $type): ?>
             <tr>
                 <td><?=$type->id; ?></td>
                 <td><?=$type->name; ?></td>
-                <td><?php if (($acl->isAllowed($user->role, 'entity-types', 'edit') && ($acl->isAllowed($user->role, 'content-type-' . $type->id, 'edit')))): ?><a class="edit-link" href="<?=$phireUri . '/entities/types/edit/' . $type->id; ?>">Edit</a><?php else: ?>&nbsp;<?php endif; ?></td>
-                <td class="text-center"><?php if (($acl->isAllowed($user->role, 'entity-types', 'remove') && ($acl->isAllowed($user->role, 'content-type-' . $type->id, 'remove')))): ?><input type="checkbox" name="rm_content_types[]" id="rm_content_types<?=$i++; ?>" value="<?=$type->id; ?>" /><?php else: ?>&nbsp;<?php endif; ?></td>
+                <td><?php if (($acl->isAllowed($user->role, 'entity-types', 'edit') && ($acl->isAllowed($user->role, 'entity-type-' . $type->id, 'edit')))): ?><a class="edit-link" href="<?=$phireUri . '/entities/types/edit/' . $type->id; ?>">Edit</a><?php else: ?>&nbsp;<?php endif; ?></td>
+                <td class="text-center"><?php if (($acl->isAllowed($user->role, 'entity-types', 'remove') && ($acl->isAllowed($user->role, 'entity-type-' . $type->id, 'remove')))): ?><input type="checkbox" name="rm_entity_types[]" id="rm_entity_types<?=$i++; ?>" value="<?=$type->id; ?>" /><?php else: ?>&nbsp;<?php endif; ?></td>
             </tr>
 <?php endforeach; ?>
         </table>

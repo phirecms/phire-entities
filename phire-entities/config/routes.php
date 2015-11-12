@@ -2,7 +2,7 @@
 
 return [
     APP_URI => [
-        '/entities[/]' => [
+        '/entities[/:tid]' => [
             'controller' => 'Phire\Entities\Controller\IndexController',
             'action'     => 'index',
             'acl'        => [
@@ -10,7 +10,7 @@ return [
                 'permission' => 'index'
             ]
         ],
-        '/entities/add[/]' => [
+        '/entities/add/:tid' => [
             'controller' => 'Phire\Entities\Controller\IndexController',
             'action'     => 'add',
             'acl'        => [
@@ -18,7 +18,7 @@ return [
                 'permission' => 'add'
             ]
         ],
-        '/entities/edit/:id' => [
+        '/entities/edit/:tid/:id' => [
             'controller' => 'Phire\Entities\Controller\IndexController',
             'action'     => 'edit',
             'acl'        => [
@@ -26,7 +26,7 @@ return [
                 'permission' => 'edit'
             ]
         ],
-        '/entities/remove[/]' => [
+        '/entities/remove/:tid' => [
             'controller' => 'Phire\Entities\Controller\IndexController',
             'action'     => 'remove',
             'acl'        => [

@@ -10,6 +10,10 @@ return [
                     'class'  => 'save-btn wide'
                 ]
             ],
+            'type_id' => [
+                'type'  => 'hidden',
+                'value' => 0
+            ],
             'id' => [
                 'type'  => 'hidden',
                 'value' => 0
@@ -34,6 +38,24 @@ return [
                 'value'      => 'Save',
                 'attributes' => [
                     'class'  => 'save-btn wide'
+                ]
+            ],
+            'order' => [
+                'type'  => 'text',
+                'label' => 'Order',
+                'value' => 0,
+                'attributes' => [
+                    'size'  => 2,
+                    'class' => 'order-field'
+                ]
+            ],
+            'field_num' => [
+                'type'  => 'text',
+                'label' => 'Display # of Fields',
+                'value' => 0,
+                'attributes' => [
+                    'size'  => 2,
+                    'class' => 'order-field'
                 ]
             ],
             'id' => [

@@ -1,10 +1,10 @@
 <?php include $phireHeader; ?>
-    <h1 class="entities-header"><?=$title; ?> : <span id="title-span"><?=$form_name; ?></span></h1>
+    <h1 class="entities-header"><?=$title; ?> : <span id="title-span"><?=$entity_name; ?></span></h1>
     <nav id="sub-nav">
 <?php if ($acl->isAllowed($user->role, 'entities', 'add')): ?>
-        <nav><a href="<?=$phireUri; ?>/entities/add">+ Add</a></nav>
+        <nav><a href="<?=$phireUri; ?>/entities/add/<?=$tid; ?>">+ Add</a></nav>
 <?php endif; ?>
-        <nav><a href="<?=$phireUri; ?>/entities">Back</a></nav>
+        <nav><a href="<?=$phireUri; ?>/entities/<?=$tid; ?>">Back</a></nav>
     </nav>
 <?=$form; ?>
 <?php include $phireFooter; ?>

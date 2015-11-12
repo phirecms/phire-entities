@@ -1,0 +1,26 @@
+<?php include $phireHeader; ?>
+    <h1 class="entities-header"><?=$title; ?></h1>
+<?php if (count($types) > 0): ?>
+<?php if (null !== $pages): ?>
+    <div class="page-links"><?=$pages; ?></div>
+<?php endif; ?>
+    <table class="data-table" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <th>Entity Types</th>
+        </tr>
+<?php $i = 1; ?>
+<?php foreach ($types as $type): ?>
+        <tr>
+            <td><?php if ($acl->isAllowed($user->role, 'entity-type-' . $type->id, 'index')): ?><a href="<?=$phireUri . '/entities/' . $type->id; ?>"><?=$type->name; ?></a><?php else: echo $type->name; ?><?php endif; ?></td>
+        </tr>
+<?php endforeach; ?>
+    </table>
+<?php else: ?>
+<?php if ($acl->isAllowed($user->role, 'entity-types', 'add')): ?>
+    <nav id="sub-nav">
+        <nav><a href="<?=$phireUri . '/entities/types/add'; ?>">+ Add</a></nav>
+    </nav>
+<?php endif; ?>
+    <p>There are currently no entity types.</p>
+<?php endif; ?>
+<?php include $phireFooter; ?>

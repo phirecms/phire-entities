@@ -6,28 +6,68 @@
 <?php endif; ?>
 <?php if ($acl->isAllowed($user->role, 'entities', 'add')): ?>
     <nav id="sub-nav">
-        <nav><a href="<?=$phireUri; ?>/entities/add">+ Add</a></nav>
+        <nav><a href="<?=$phireUri; ?>/entities/add/<?=$tid; ?>">+ Add</a></nav>
     </nav>
 <?php endif; ?>
 <?php if ($acl->isAllowed($user->role, 'entities', 'remove')): ?>
-    <form id="entities-form" action="<?=$phireUri . '/entities/remove'; ?>" method="post">
+    <form id="entities-form" action="<?=$phireUri . '/entities/remove/' . $tid; ?>" method="post">
 <?php endif; ?>
         <table class="data-table" cellpadding="0" cellspacing="0" border="0">
             <tr>
                 <th><a href="<?=$phireUri . '/entities?sort=id';?>">#</a></th>
                 <th><a href="<?=$phireUri . '/entities?sort=name';?>">Name</a></th>
-                <th># of Fields</th>
+<?php $j = 0;
+foreach ($fields as $name => $type):
+    if ($j < $fieldNum):
+?>
+                <th><?=ucwords(str_replace(['_', '-'], [' ', ' '], $name)); ?><?=((($j == ($fieldNum - 1)) && (count($fields) > $fieldNum)) ? ' <span style="font-weight: normal;">[ ' . count($fields) . ' Fields Total ]</span>' : '');?></th>
+<?php
+    endif;
+    $j++;
+endforeach;
+?>
                 <th class="text-center"><?php if ($acl->isAllowed($user->role, 'entities', 'edit')): ?>Edit<?php else: ?>&nbsp;<?php endif; ?></th>
                 <th class="text-center"><?php if ($acl->isAllowed($user->role, 'entities', 'remove')): ?><input type="checkbox" name="checkall" id="checkall" value="rm_entities" /><?php else: ?>&nbsp;<?php endif; ?></th>
             </tr>
 <?php $i = 1; ?>
-<?php foreach ($entities as $form): ?>
+<?php foreach ($entities as $entity): ?>
             <tr>
-                <td><?=$form->id; ?></td>
-                <td><?=$form->name; ?></td>
-                <td><?=$form->num_of_fields; ?></td>
-                <td><?php if ($acl->isAllowed($user->role, 'entities', 'edit')): ?><a class="edit-link" href="<?=$phireUri . '/entities/edit/' . $form->id; ?>">Edit</a><?php else: ?>&nbsp;<?php endif; ?></td>
-                <td class="text-center"><?php if ($acl->isAllowed($user->role, 'entities', 'remove')): ?><input type="checkbox" name="rm_entities[]" id="rm_entities<?=$i++; ?>" value="<?=$form->id; ?>" /><?php else: ?>&nbsp;<?php endif; ?></td>
+                <td><?=$entity->id; ?></td>
+                <td><?=$entity->name; ?></td>
+<?php $j = 0;
+foreach ($fields as $name => $type):
+    if ($j < $fieldNum):
+?>
+                <td><?php
+if (isset($entity[$name])):
+    if ($type == 'file'):
+        $size = filesize($_SERVER['DOCUMENT_ROOT'] . BASE_PATH. CONTENT_PATH . '/assets/phire-fields' . (class_exists('Phire\FieldsPlus\Model\Field') ? '-plus' : '') . '/files/' . $entity[$name]);
+        if ($size >= 1000000):
+            $size = round(($size / 1000000), 2) . ' MB';
+        elseif (($size < 1000000) && ($size >= 1000)):
+            $size = round(($size / 1000), 2) . ' KB';
+        else:
+            $size .= ' B';
+        endif;
+        $fv   = '<a class="normal-link" href="' . BASE_PATH. CONTENT_PATH . '/assets/phire-fields' . (class_exists('Phire\FieldsPlus\Model\Field') ? '-plus' : '') . '/files/' . $entity[$name] . '" target="_blank">' . $entity[$name] . '</a> (' . $size . ')';
+    else:
+        $fv = (is_array($entity[$name]) ? implode(', ', $entity[$name]) : $entity[$name]);
+        if (strlen($fv) > 60):
+            $fv = substr($fv, 0, 60) . '...';
+        endif;
+    endif;
+    echo $fv;
+else:
+    echo '&nbsp;';
+endif;
+?></td>
+<?php
+    endif;
+    $j++;
+endforeach;
+?>
+                <td><?php if ($acl->isAllowed($user->role, 'entities', 'edit')): ?><a class="edit-link" href="<?=$phireUri . '/entities/edit/' . $tid . '/' . $entity->id; ?>">Edit</a><?php else: ?>&nbsp;<?php endif; ?></td>
+                <td class="text-center"><?php if ($acl->isAllowed($user->role, 'entities', 'remove')): ?><input type="checkbox" name="rm_entities[]" id="rm_entities<?=$i++; ?>" value="<?=$entity->id; ?>" /><?php else: ?>&nbsp;<?php endif; ?></td>
             </tr>
 <?php endforeach; ?>
         </table>
@@ -36,11 +76,12 @@
     </form>
 <?php endif; ?>
 <?php else: ?>
-<?php if ($acl->isAllowed($user->role, 'entities', 'add')): ?>
     <nav id="sub-nav">
-        <nav><a href="<?=$phireUri; ?>/entities/add">+ Add</a></nav>
-    </nav>
+<?php if ($acl->isAllowed($user->role, 'entities', 'add')): ?>
+        <nav><a href="<?=$phireUri; ?>/entities/add/<?=$tid; ?>">+ Add</a></nav>
 <?php endif; ?>
-    <p>There are currently no entities.</p>
+        <nav><a href="<?=$phireUri; ?>/entities/">Back</a></nav>
+    </nav>
+    <p>There are currently no entities of this type.</p>
 <?php endif; ?>
 <?php include $phireFooter; ?>

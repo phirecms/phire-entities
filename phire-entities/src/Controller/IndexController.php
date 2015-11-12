@@ -14,27 +14,65 @@ class IndexController extends AbstractController
     /**
      * Index action method
      *
+     * @param  int $tid
      * @return void
      */
-    public function index()
+    public function index($tid = null)
     {
-        $this->prepareView('entities/index.phtml');
-        $entities = new Model\Entity();
+        if (null === $tid) {
+            $this->prepareView('entities/types.phtml');
+            $type = new Model\EntityType();
 
-        if ($entities->hasPages($this->config->pagination)) {
-            $limit = $this->config->pagination;
-            $pages = new Paginator($entities->getCount(), $limit);
-            $pages->useInput(true);
+            if ($type->hasPages($this->config->pagination)) {
+                $limit = $this->config->pagination;
+                $pages = new Paginator($type->getCount(), $limit);
+                $pages->useInput(true);
+            } else {
+                $limit = null;
+                $pages = null;
+            }
+
+            $this->view->title = 'Entities';
+            $this->view->pages = $pages;
+            $this->view->types = $type->getAll(
+                $limit, $this->request->getQuery('page'), $this->request->getQuery('sort')
+            );
         } else {
-            $limit = null;
-            $pages = null;
-        }
+            $this->prepareView('entities/index.phtml');
+            $entities = new Model\Entity(['tid' => $tid]);
+            $type     = new Model\EntityType();
+            $type->getById($tid);
 
-        $this->view->title    = 'Entities';
-        $this->view->pages    = $pages;
-        $this->view->entities = $entities->getAll(
-            $limit, $this->request->getQuery('page'), $this->request->getQuery('sort'), $this->application->modules()
-        );
+
+
+            if (!isset($type->id)) {
+                $this->redirect(BASE_PATH . APP_URI . '/entities');
+            }
+
+            if ($this->services['acl']->isAllowed($this->sess->user->role, 'entity-type-' . $type->id, 'index')) {
+                if ($entities->hasPages($this->config->pagination)) {
+                    $limit = $this->config->pagination;
+                    $pages = new Paginator($entities->getCount(), $limit);
+                    $pages->useInput(true);
+                } else {
+                    $limit = null;
+                    $pages = null;
+                }
+
+                $ents = $entities->getAll(
+                    $limit, $this->request->getQuery('page'), $this->request->getQuery('sort'), $this->application->modules()
+                );
+
+                $this->view->title    = 'Entities : ' . $type->name;
+                $this->view->pages    = $pages;
+                $this->view->tid      = $tid;
+                $this->view->fieldNum = $type->field_num;
+                $this->view->fields   = $ents['fields'];
+                $this->view->entities = $ents['rows'];
+            } else {
+                $this->redirect(BASE_PATH . APP_URI . '/entities');
+            }
+        }
 
         $this->send();
     }
@@ -42,14 +80,17 @@ class IndexController extends AbstractController
     /**
      * Add action method
      *
+     * @param  int $tid
      * @return void
      */
-    public function add()
+    public function add($tid)
     {
         $this->prepareView('entities/add.phtml');
         $this->view->title = 'Entities : Add';
+        $this->view->tid   = $tid;
 
         $fields = $this->application->config()['forms']['Phire\Entities\Form\Entity'];
+        $fields[0]['type_id']['value'] = $tid;
 
         $this->view->form = new Form\Entity($fields);
 
@@ -61,11 +102,11 @@ class IndexController extends AbstractController
                 $this->view->form->clearFilters()
                      ->addFilter('html_entity_decode', [ENT_QUOTES, 'UTF-8'])
                      ->filter();
-                $entity = new Model\Form();
+                $entity = new Model\Entity();
                 $entity->save($this->view->form->getFields());
                 $this->view->id = $entity->id;
                 $this->sess->setRequestValue('saved', true);
-                $this->redirect(BASE_PATH . APP_URI . '/entities/edit/'. $entity->id);
+                $this->redirect(BASE_PATH . APP_URI . '/entities/edit/'. $tid . '/' . $entity->id);
             }
         }
 
@@ -75,10 +116,11 @@ class IndexController extends AbstractController
     /**
      * Edit action method
      *
+     * @param  int $tid
      * @param  int $id
      * @return void
      */
-    public function edit($id)
+    public function edit($tid, $id)
     {
         $entity = new Model\Entity();
         $entity->getById($id);
@@ -88,10 +130,12 @@ class IndexController extends AbstractController
         }
 
         $this->prepareView('entities/edit.phtml');
-        $this->view->title         = 'Entities';
+        $this->view->title       = 'Entities';
         $this->view->entity_name = $entity->name;
+        $this->view->tid         = $tid;
 
         $fields = $this->application->config()['forms']['Phire\Entities\Form\Entity'];
+        $fields[0]['type_id']['value']              = $tid;
         $fields[1]['name']['attributes']['onkeyup'] = 'phire.changeTitle(this.value);';
 
         $this->view->form = new Form\Entity($fields);
@@ -110,7 +154,7 @@ class IndexController extends AbstractController
                 $entity->update($this->view->form->getFields());
                 $this->view->id = $entity->id;
                 $this->sess->setRequestValue('saved', true);
-                $this->redirect(BASE_PATH . APP_URI . '/entities/edit/'. $entity->id);
+                $this->redirect(BASE_PATH . APP_URI . '/entities/edit/'. $tid . '/' . $entity->id);
             }
         }
 
@@ -120,16 +164,17 @@ class IndexController extends AbstractController
     /**
      * Remove action method
      *
+     * @param  int $tid
      * @return void
      */
-    public function remove()
+    public function remove($tid)
     {
         if ($this->request->isPost()) {
             $entity = new Model\Entity();
             $entity->remove($this->request->getPost());
         }
         $this->sess->setRequestValue('removed', true);
-        $this->redirect(BASE_PATH . APP_URI . '/entities');
+        $this->redirect(BASE_PATH . APP_URI . '/entities/' . $tid);
     }
 
     /**
