@@ -10,7 +10,25 @@
     border-top: solid 1px #ccc;
 }
 
-#entity-form > dl:first-child, #entity-type-form > dl:first-child {
+#entity-form > dl:first-child {
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+    overflow: auto;
+    /*height: 40px;*/
+}
+
+#entity-form > dl:first-child > dd:nth-child(2) {
+    float: left;
+    width: calc(100% - 220px);
+}
+
+#entity-form > dl:first-child > dd:nth-child(3) {
+    float: right;
+    width: 160px;
+}
+
+#entity-type-form > dl:first-child {
     margin: 0 0 0 20px;
     padding: 0 0 0 20px;
     width: 160px;
@@ -20,17 +38,25 @@
     height: 100%;
 }
 
+#entity-form-field-group-2 {
+    clear: both;
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+    height: 10px;
+    overflow: hidden;
+}
+
 #entity-form > dl > dd, #entity-form > dl > dt {
     padding-left: 4px;
 }
 
-#entity-form > dl:first-child > dd, #entity-form > dl:first-child > dt,
 #entity-type-form > dl:first-child > dd, #entity-type-form > dl:first-child > dt {
     padding-left: 0;
     width: 100%;
 }
 
-#entity-form > dl:first-child > dt, #entity-type-form > dl:first-child > dt {
+#entity-type-form > dl:first-child > dt {
     margin: 0 0 5px 0;
     border-bottom: dotted 1px #aaa;
 }

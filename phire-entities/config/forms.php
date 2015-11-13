@@ -3,23 +3,6 @@
 return [
     'Phire\Entities\Form\Entity' => [
         [
-            'submit' => [
-                'type'       => 'submit',
-                'value'      => 'Save',
-                'attributes' => [
-                    'class'  => 'save-btn wide'
-                ]
-            ],
-            'type_id' => [
-                'type'  => 'hidden',
-                'value' => 0
-            ],
-            'id' => [
-                'type'  => 'hidden',
-                'value' => 0
-            ]
-        ],
-        [
             'name' => [
                 'type'       => 'text',
                 'label'      => 'Name',
@@ -28,6 +11,23 @@ return [
                     'size'   => 60,
                     'style'  => 'width: 98%'
                 ]
+            ],
+            'submit' => [
+                'type'       => 'submit',
+                'value'      => 'Save',
+                'attributes' => [
+                    'class'  => 'save-btn wide'
+                ]
+            ]
+        ],
+        [
+            'type_id' => [
+                'type'  => 'hidden',
+                'value' => 0
+            ],
+            'id' => [
+                'type'  => 'hidden',
+                'value' => 0
             ]
         ]
     ],

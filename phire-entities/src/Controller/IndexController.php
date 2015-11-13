@@ -89,7 +89,7 @@ class IndexController extends AbstractController
         $this->view->tid   = $tid;
 
         $fields = $this->application->config()['forms']['Phire\Entities\Form\Entity'];
-        $fields[0]['type_id']['value'] = $tid;
+        $fields[1]['type_id']['value'] = $tid;
 
         $this->view->form = new Form\Entity($fields);
 
@@ -134,8 +134,8 @@ class IndexController extends AbstractController
         $this->view->tid         = $tid;
 
         $fields = $this->application->config()['forms']['Phire\Entities\Form\Entity'];
-        $fields[0]['type_id']['value']              = $tid;
-        $fields[1]['name']['attributes']['onkeyup'] = 'phire.changeTitle(this.value);';
+        $fields[1]['type_id']['value']              = $tid;
+        $fields[0]['name']['attributes']['onkeyup'] = 'phire.changeTitle(this.value);';
 
         $this->view->form = new Form\Entity($fields);
         $this->view->form->addFilter('htmlentities', [ENT_QUOTES, 'UTF-8'])
