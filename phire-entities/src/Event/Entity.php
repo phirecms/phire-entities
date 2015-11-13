@@ -39,7 +39,7 @@ class Entity
             }
 
             $resources['entity-type-' . $type->id . '|entity-type-' . str_replace(' ', '-', strtolower($type->name))] = [
-                'index', 'add', 'edit', 'remove'
+                'index', 'add', 'edit', 'export', 'remove'
             ];
 
             if (!isset($params['tree']['entities']['children'])) {

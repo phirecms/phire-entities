@@ -34,6 +34,14 @@ return [
                 'permission' => 'remove'
             ]
         ],
+        '/entities/export/:tid' => [
+            'controller' => 'Phire\Entities\Controller\IndexController',
+            'action'     => 'export',
+            'acl'        => [
+                'resource'   => 'entities',
+                'permission' => 'export'
+            ]
+        ],
         '/entities/types[/]' => [
             'controller' => 'Phire\Entities\Controller\TypeController',
             'action'     => 'index',

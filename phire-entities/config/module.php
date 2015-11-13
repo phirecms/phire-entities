@@ -42,7 +42,6 @@ return [
                 'action'   => 'Phire\Entities\Event\Entity::bootstrap',
                 'priority' => 1000
             ]
-        ],
-        'field_list_limit' => 3
+        ]
     ]
 ];

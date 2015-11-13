@@ -6,6 +6,7 @@ use Phire\Entities\Model;
 use Phire\Entities\Form;
 use Phire\Entities\Table;
 use Phire\Controller\AbstractController;
+use Pop\Data\Data;
 use Pop\Paginator\Paginator;
 
 class IndexController extends AbstractController
@@ -43,8 +44,6 @@ class IndexController extends AbstractController
             $type     = new Model\EntityType();
             $type->getById($tid);
 
-
-
             if (!isset($type->id)) {
                 $this->redirect(BASE_PATH . APP_URI . '/entities');
             }
@@ -60,7 +59,7 @@ class IndexController extends AbstractController
                 }
 
                 $ents = $entities->getAll(
-                    $limit, $this->request->getQuery('page'), $this->request->getQuery('sort'), $this->application->modules()
+                    $limit, $this->request->getQuery('page'), $this->request->getQuery('sort')
                 );
 
                 $this->view->title    = 'Entities : ' . $type->name;
@@ -159,6 +158,32 @@ class IndexController extends AbstractController
         }
 
         $this->send();
+    }
+
+    /**
+     * Export action method
+     *
+     * @param  int $tid
+     * @return void
+     */
+    public function export($tid)
+    {
+        $entities = new Model\Entity(['tid' => $tid]);
+        $type     = new Model\EntityType();
+        $type->getById($tid);
+
+        if (!isset($type->id)) {
+            $this->redirect(BASE_PATH . APP_URI . '/entities');
+        }
+
+        if ($this->services['acl']->isAllowed($this->sess->user->role, 'entity-type-' . $type->id, 'export')) {
+            $rows = $entities->getAllForExport();
+            $data = new Data($rows);
+            $data->serialize('csv', ['omit' => 'type_id']);
+            $data->outputToHttp($type->name . '_' . date('Y-m-d') . '.csv');
+        } else {
+            $this->redirect(BASE_PATH . APP_URI . '/entities/'. $tid);
+        }
     }
 
     /**

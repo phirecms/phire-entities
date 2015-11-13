@@ -39,7 +39,7 @@
     width: 160px;
 }
 
-#entity-form-field-group-2, #content-form-field-group-2 {
+#entity-form-field-group-2, #entity-type-form-field-group-2, #content-form-field-group-2 {
     width: calc(100% - 220px);
 }
 

@@ -4,18 +4,21 @@
 <?php if (null !== $pages): ?>
     <div class="page-links"><?=$pages; ?></div>
 <?php endif; ?>
-<?php if ($acl->isAllowed($user->role, 'entities', 'add')): ?>
     <nav id="sub-nav">
+<?php if ($acl->isAllowed($user->role, 'entities', 'add')): ?>
         <nav><a href="<?=$phireUri; ?>/entities/add/<?=$tid; ?>">+ Add</a></nav>
-    </nav>
 <?php endif; ?>
+<?php if (($acl->isAllowed($user->role, 'entities', 'export')) && ($acl->isAllowed($user->role, 'entity-type-' . $tid, 'export'))): ?>
+        <nav><a href="<?=$phireUri; ?>/entities/export/<?=$tid; ?>">Export</a></nav>
+<?php endif; ?>
+    </nav>
 <?php if ($acl->isAllowed($user->role, 'entities', 'remove')): ?>
     <form id="entities-form" action="<?=$phireUri . '/entities/remove/' . $tid; ?>" method="post">
 <?php endif; ?>
         <table class="data-table" cellpadding="0" cellspacing="0" border="0">
             <tr>
-                <th><a href="<?=$phireUri . '/entities?sort=id';?>">#</a></th>
-                <th><a href="<?=$phireUri . '/entities?sort=name';?>">Name</a></th>
+                <th><a href="<?=$phireUri . '/entities/' . $tid . '?sort=id';?>">#</a></th>
+                <th><a href="<?=$phireUri . '/entities/' . $tid . '?sort=name';?>">Name</a></th>
 <?php $j = 0;
 foreach ($fields as $name => $type):
     if ($j < $fieldNum):

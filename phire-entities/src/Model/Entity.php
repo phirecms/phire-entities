@@ -11,38 +11,32 @@ class Entity extends AbstractModel
     /**
      * Get all entities
      *
-     * @param  int                 $limit
-     * @param  int                 $page
-     * @param  string              $sort
-     * @param  \Pop\Module\Manager $modules
+     * @param  int    $limit
+     * @param  int    $page
+     * @param  string $sort
      * @return array
      */
-    public function getAll($limit = null, $page = null, $sort = null, \Pop\Module\Manager $modules = null)
+    public function getAll($limit = null, $page = null, $sort = null)
     {
-        $selectFields = [
-            'id'      => DB_PREFIX . 'entities.id',
-            'type_id' => DB_PREFIX . 'entities.type_id',
-            'name'    => DB_PREFIX . 'entities.name'
-        ];
+        $order = (null !== $sort) ? $this->getSortOrder($sort, $page) : 'id ASC';
 
-        $sql = Table\Entities::sql();
-        $sql->select($selectFields);
+        if (null !== $limit) {
+            $page = ((null !== $page) && ((int)$page > 1)) ?
+                ($page * $limit) - $limit : null;
 
-        $params = [
-            'type_id' => $this->tid
-        ];
-
-        $order  = (null !== $sort) ? $this->getSortOrder($sort) : 'id DESC';
-        $by     = explode(' ', $order);
-        $sql->select()->orderBy($by[0], $by[1]);
-        $sql->select()->where('type_id = :type_id');
-
-        $rows = Table\Entities::execute((string)$sql, $params)->rows();
+            $rows = Table\Entities::findBy(['type_id' => $this->tid], [
+                'offset' => $page,
+                'limit'  => $limit,
+                'order'  => $order
+            ])->rows();
+        } else {
+            $rows = Table\Entities::findBy(['type_id' => $this->tid], ['order' => $order])->rows();
+        }
 
         $fieldNames = [];
+
         foreach ($rows as $i => $row) {
-            $fieldNames = [];
-            if ((null !== $modules) && ($modules->isRegistered('phire-fields'))) {
+            if (class_exists('Phire\Fields\Model\FieldValue')) {
                 $class = 'Phire\Entities\Model\Entity';
                 $sql   = \Phire\Fields\Table\Fields::sql();
                 $sql->select()->where('models LIKE :models');
@@ -59,7 +53,9 @@ class Entity extends AbstractModel
                             'model'    => 'Phire\Entities\Model\Entity'
                         ]);
                         foreach ($fv->rows() as $fv) {
-                            $fieldNames[$field->name] = $field->type;
+                            if (!array_key_exists($field->name, $fieldNames)) {
+                                $fieldNames[$field->name] = $field->type;
+                            }
                             $rows[$i][$field->name]   = json_decode($fv->value, true);
                         }
                     } else {
@@ -74,7 +70,9 @@ class Entity extends AbstractModel
                             'revision' => 0
                         ]);
 
-                        $fieldNames[$field->name] = $field->type;
+                        if (!array_key_exists($field->name, $fieldNames)) {
+                            $fieldNames[$field->name] = $field->type;
+                        }
 
                         if ($fv->count() > 1) {
                             $rows[$i][$field->name] = [];
@@ -93,18 +91,94 @@ class Entity extends AbstractModel
         return ['rows' => $rows, 'fields' => $fieldNames];
     }
 
+
+    /**
+     * Get all entities for export
+     *
+     * @return array
+     */
+    public function getAllForExport()
+    {
+        $rows = $this->getAll()['rows'];
+
+        foreach ($rows as $key => $value) {
+            foreach($value as $k => $v) {
+                if (is_array($v)) {
+                    $value[$k] = implode(', ', $v);
+                }
+            }
+            $rows[$key] = (array)$value;
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Get entity by type
+     *
+     * @param  string $type
+     * @param  int    $limit
+     * @param  int    $page
+     * @param  string $sort
+     * @return array
+     */
+    public function getByType($type, $limit = null, $page = null, $sort = null)
+    {
+        $entityType = (is_numeric($type)) ?
+            Table\EntityTypes::findById($type) :
+            Table\EntityTypes::findBy(['name' => $type]);
+
+        $rows = [];
+
+        if (isset($entityType->id)) {
+            $this->tid = $entityType->id;
+            $entities  = $this->getAll($limit, $page, $sort);
+            $rows      = $entities['rows'];
+        }
+
+        return $rows;
+    }
+
     /**
      * Get entity by ID
      *
-     * @param  int $id
+     * @param  int   $id
+     * @param  array $filters
      * @return void
      */
-    public function getById($id)
+    public function getById($id, array $filters = [])
     {
         $entity = Table\Entities::findById($id);
         if (isset($entity->id)) {
             $data = $entity->getColumns();
             $this->data = array_merge($this->data, $data);
+
+            if (class_exists('Phire\Fields\Model\FieldValue')) {
+                $entity     = \Phire\Fields\Model\FieldValue::getModelObjectValues($this, null, $filters);
+                $data       = $entity->toArray();
+                $this->data = array_merge($this->data, $data);
+            }
+        }
+    }
+
+    /**
+     * Get entity by name
+     *
+     * @param  string $name
+     * @param  array  $filters
+     * @return void
+     */
+    public function getByName($name, array $filters = [])
+    {
+        $entity = Table\Entities::findBy(['name' => $name]);
+        if (isset($entity->id)) {
+            $this->getById($entity->id);
+
+            if (class_exists('Phire\Fields\Model\FieldValue')) {
+                $entity     = \Phire\Fields\Model\FieldValue::getModelObjectValues($this, null, $filters);
+                $data       = $entity->toArray();
+                $this->data = array_merge($this->data, $data);
+            }
         }
     }
 
