@@ -136,13 +136,13 @@ class IndexController extends AbstractController
         $type->getById($tid);
 
         $this->prepareView('entities/edit.phtml');
-        $this->view->title       = 'Entities : ' . $type->name;
-        $this->view->entity_name = $entity->name;
-        $this->view->tid         = $tid;
+        $this->view->title        = 'Entities : ' . $type->name;
+        $this->view->entity_title = $entity->title;
+        $this->view->tid          = $tid;
 
         $fields = $this->application->config()['forms']['Phire\Entities\Form\Entity'];
-        $fields[1]['type_id']['value']              = $tid;
-        $fields[0]['name']['attributes']['onkeyup'] = 'phire.changeTitle(this.value);';
+        $fields[1]['type_id']['value']               = $tid;
+        $fields[0]['title']['attributes']['onkeyup'] = 'phire.changeTitle(this.value);';
 
         $this->view->form = new Form\Entity($fields);
         $this->view->form->addFilter('htmlentities', [ENT_QUOTES, 'UTF-8'])

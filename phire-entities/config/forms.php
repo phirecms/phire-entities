@@ -3,9 +3,9 @@
 return [
     'Phire\Entities\Form\Entity' => [
         [
-            'name' => [
+            'title' => [
                 'type'       => 'text',
-                'label'      => 'Name',
+                'label'      => 'Title',
                 'required'   => true,
                 'attributes' => [
                     'size'   => 60,

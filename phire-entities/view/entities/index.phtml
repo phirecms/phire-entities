@@ -18,7 +18,7 @@
         <table class="data-table" cellpadding="0" cellspacing="0" border="0">
             <tr>
                 <th><a href="<?=$phireUri . '/entities/' . $tid . '?sort=id';?>">#</a></th>
-                <th><a href="<?=$phireUri . '/entities/' . $tid . '?sort=name';?>">Name</a></th>
+                <th><a href="<?=$phireUri . '/entities/' . $tid . '?sort=title';?>">Title</a></th>
 <?php $j = 0;
 foreach ($fields as $name => $type):
     if ($j < $fieldNum):
@@ -36,7 +36,7 @@ endforeach;
 <?php foreach ($entities as $entity): ?>
             <tr>
                 <td><?=$entity->id; ?></td>
-                <td><?=$entity->name; ?></td>
+                <td><?=$entity->title; ?></td>
 <?php $j = 0;
 foreach ($fields as $name => $type):
     if ($j < $fieldNum):

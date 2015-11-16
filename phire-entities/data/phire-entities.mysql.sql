@@ -30,10 +30,10 @@ CREATE TABLE IF NOT EXISTS `[{prefix}]entity_types` (
 CREATE TABLE IF NOT EXISTS `[{prefix}]entities` (
   `id` int(16) NOT NULL AUTO_INCREMENT,
   `type_id` int(16) NOT NULL,
-  `name` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `entity_type_id` (`type_id`),
-  INDEX `entity_name` (`name`),
+  INDEX `entity_title` (`title`),
   CONSTRAINT `fk_entity_type` FOREIGN KEY (`type_id`) REFERENCES `[{prefix}]entity_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=51001 ;
 

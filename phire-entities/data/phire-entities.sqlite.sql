@@ -37,11 +37,11 @@ CREATE INDEX "entity_type_name" ON "[{prefix}]entity_types" ("name");
 CREATE TABLE IF NOT EXISTS "[{prefix}]entities" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "type_id" integer NOT NULL,
-  "name" varchar NOT NULL,
+  "title" varchar NOT NULL,
   UNIQUE ("id"),
   CONSTRAINT "fk_entity_type" FOREIGN KEY ("type_id") REFERENCES "[{prefix}]entity_types" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 ) ;
 
 INSERT INTO sqlite_sequence ("name", "seq") VALUES ('[{prefix}]entities', 51000);
 CREATE INDEX "entity_type_id" ON "[{prefix}]entities" ("type_id");
-CREATE INDEX "entity_name" ON "[{prefix}]entities" ("name");
+CREATE INDEX "entity_title" ON "[{prefix}]entities" ("title");

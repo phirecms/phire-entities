@@ -165,15 +165,15 @@ class Entity extends AbstractModel
     }
 
     /**
-     * Get entity by name
+     * Get entity by title
      *
-     * @param  string $name
+     * @param  string $title
      * @param  array  $filters
      * @return \ArrayObject
      */
-    public function getByName($name, array $filters = [])
+    public function getByTitle($title, array $filters = [])
     {
-        $entity = Table\Entities::findBy(['name' => $name]);
+        $entity = Table\Entities::findBy(['title' => $title]);
         if (isset($entity->id)) {
             $this->getById($entity->id);
 
@@ -196,7 +196,7 @@ class Entity extends AbstractModel
     public function save(array $fields)
     {
         $entity = new Table\Entities([
-            'name'    => $fields['name'],
+            'title'   => $fields['title'],
             'type_id' => $fields['type_id']
         ]);
         $entity->save();
@@ -214,7 +214,7 @@ class Entity extends AbstractModel
     {
         $entity = Table\Entities::findById((int)$fields['id']);
         if (isset($entity->id)) {
-            $entity->name    = $fields['name'];
+            $entity->title   = $fields['title'];
             $entity->type_id = $fields['type_id'];
             $entity->save();
 

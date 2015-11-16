@@ -32,12 +32,12 @@ CREATE SEQUENCE entity_id_seq START 51001;
 CREATE TABLE IF NOT EXISTS "[{prefix}]entities" (
   "id" integer NOT NULL DEFAULT nextval('entity_id_seq'),
   "type_id" integer NOT NULL,
-  "name" varchar(255) NOT NULL,
+  "title" varchar(255) NOT NULL,
   PRIMARY KEY ("id"),
   CONSTRAINT "fk_entity_type" FOREIGN KEY ("type_id") REFERENCES "[{prefix}]entity_types" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 ) ;
 
 ALTER SEQUENCE entity_id_seq OWNED BY "[{prefix}]entities"."id";
 CREATE INDEX "entity_type_id" ON "[{prefix}]entities" ("type_id");
-CREATE INDEX "entity_name" ON "[{prefix}]entities" ("name");
+CREATE INDEX "entity_title" ON "[{prefix}]entities" ("title");
 
