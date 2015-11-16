@@ -144,11 +144,12 @@ class Entity extends AbstractModel
      *
      * @param  int   $id
      * @param  array $filters
-     * @return void
+     * @return \ArrayObject
      */
     public function getById($id, array $filters = [])
     {
         $entity = Table\Entities::findById($id);
+        $data   = [];
         if (isset($entity->id)) {
             $data = $entity->getColumns();
             $this->data = array_merge($this->data, $data);
@@ -159,6 +160,8 @@ class Entity extends AbstractModel
                 $this->data = array_merge($this->data, $data);
             }
         }
+
+        return new \ArrayObject($this->data, \ArrayObject::ARRAY_AS_PROPS);
     }
 
     /**
@@ -166,7 +169,7 @@ class Entity extends AbstractModel
      *
      * @param  string $name
      * @param  array  $filters
-     * @return void
+     * @return \ArrayObject
      */
     public function getByName($name, array $filters = [])
     {
@@ -180,6 +183,8 @@ class Entity extends AbstractModel
                 $this->data = array_merge($this->data, $data);
             }
         }
+
+        return new \ArrayObject($this->data, \ArrayObject::ARRAY_AS_PROPS);
     }
 
     /**

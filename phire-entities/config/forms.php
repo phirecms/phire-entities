@@ -29,7 +29,8 @@ return [
                 'type'  => 'hidden',
                 'value' => 0
             ]
-        ]
+        ],
+        []
     ],
     'Phire\Entities\Form\EntityType' => [
         [

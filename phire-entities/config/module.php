@@ -41,6 +41,11 @@ return [
                 'name'     => 'app.route.pre',
                 'action'   => 'Phire\Entities\Event\Entity::bootstrap',
                 'priority' => 1000
+            ],
+            [
+                'name'     => 'app.send.pre',
+                'action'   => 'Phire\Entities\Event\Entity::init',
+                'priority' => 500
             ]
         ]
     ]

@@ -2,10 +2,9 @@
 
 namespace Phire\Entities\Event;
 
+use Phire\Entities\Model;
 use Phire\Entities\Table;
 use Pop\Application;
-use Pop\Web\Mobile;
-use Pop\Web\Session;
 use Phire\Controller\AbstractController;
 
 class Entity
@@ -62,6 +61,31 @@ class Entity
             $application->module('phire-entities')->mergeConfig(['models' => $models]);
         }
 
+    }
+
+    /**
+     * Init the entity model and parse any entity placeholders
+     *
+     * @param  AbstractController $controller
+     * @param  Application        $application
+     * @return void
+     */
+    public static function init(AbstractController $controller, Application $application)
+    {
+        if ($application->isRegistered('phire-templates') && ($controller->hasView()) && ($controller->view()->isStream())) {
+            $ents = [];
+            preg_match_all('/\[\{entity_.*\}\]/', $controller->view()->getTemplate()->getTemplate(), $ents);
+            if (isset($ents[0]) && isset($ents[0][0])) {
+                foreach ($ents[0] as $ent) {
+                    $id = str_replace('}]', '', substr($ent, (strpos($ent, '_') + 1)));
+                    $controller->view()->{'entity_' . $id} = (new Model\Entity())->getByType($id);
+                }
+            }
+        }
+
+        if ($controller->hasView()) {
+            $controller->view()->phire->entity = new Model\Entity();
+        }
     }
 
 }

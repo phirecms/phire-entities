@@ -85,7 +85,11 @@ class IndexController extends AbstractController
     public function add($tid)
     {
         $this->prepareView('entities/add.phtml');
-        $this->view->title = 'Entities : Add';
+
+        $type = new Model\EntityType();
+        $type->getById($tid);
+
+        $this->view->title = 'Entities : ' . $type->name . ' : Add';
         $this->view->tid   = $tid;
 
         $fields = $this->application->config()['forms']['Phire\Entities\Form\Entity'];
@@ -128,8 +132,11 @@ class IndexController extends AbstractController
             $this->redirect(BASE_PATH . APP_URI . '/entities');
         }
 
+        $type = new Model\EntityType();
+        $type->getById($tid);
+
         $this->prepareView('entities/edit.phtml');
-        $this->view->title       = 'Entities';
+        $this->view->title       = 'Entities : ' . $type->name;
         $this->view->entity_name = $entity->name;
         $this->view->tid         = $tid;
 
