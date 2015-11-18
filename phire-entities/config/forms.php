@@ -53,7 +53,7 @@ return [
             'field_num' => [
                 'type'  => 'text',
                 'label' => 'Display # of Fields',
-                'value' => 0,
+                'value' => 5,
                 'attributes' => [
                     'size'  => 2,
                     'class' => 'order-field'
