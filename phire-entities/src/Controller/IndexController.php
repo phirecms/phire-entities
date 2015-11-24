@@ -66,8 +66,8 @@ class IndexController extends AbstractController
                 $this->view->pages    = $pages;
                 $this->view->tid      = $tid;
                 $this->view->fieldNum = $type->field_num;
-                $this->view->fields   = $ents['fields'];
-                $this->view->entities = $ents['rows'];
+                $this->view->entities = $ents;
+                $this->view->fields   = $entities->getAllFields($ents);
             } else {
                 $this->redirect(BASE_PATH . APP_URI . '/entities');
             }

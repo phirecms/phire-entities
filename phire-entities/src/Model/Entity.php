@@ -88,7 +88,73 @@ class Entity extends AbstractModel
             }
         }
 
-        return ['rows' => $rows, 'fields' => $fieldNames];
+        return $rows;
+    }
+
+    /**
+     * Get all entity field names
+     *
+     * @param  array $rows
+     * @return array
+     */
+    public function getAllFields(array $rows)
+    {
+        $fieldNames = [];
+
+        foreach ($rows as $i => $row) {
+            if (class_exists('Phire\Fields\Model\FieldValue')) {
+                $class = 'Phire\Entities\Model\Entity';
+                $sql   = \Phire\Fields\Table\Fields::sql();
+                $sql->select()->where('models LIKE :models');
+                $sql->select()->orderBy('order');
+
+                $value  = ($sql->getDbType() == \Pop\Db\Sql::SQLITE) ? '%' . $class . '%' : '%' . addslashes($class) . '%';
+                $fields = \Phire\Fields\Table\Fields::execute((string)$sql, ['models' => $value]);
+
+                foreach ($fields->rows() as $field) {
+                    if ($field->storage == 'eav') {
+                        $fv = \Phire\Fields\Table\FieldValues::findBy([
+                            'field_id' => $field->id,
+                            'model_id' => $row->id,
+                            'model'    => 'Phire\Entities\Model\Entity'
+                        ]);
+                        foreach ($fv->rows() as $fv) {
+                            if (!array_key_exists($field->name, $fieldNames)) {
+                                $fieldNames[$field->name] = $field->type;
+                            }
+                            $rows[$i][$field->name]   = json_decode($fv->value, true);
+                        }
+                    } else {
+                        $fv = new \Pop\Db\Record();
+                        $fv->setPrefix(DB_PREFIX)
+                            ->setPrimaryKeys(['id'])
+                            ->setTable('field_' . $field->name);
+
+                        $fv->findRecordsBy([
+                            'model_id' => $row->id,
+                            'model'    => 'Phire\Entities\Model\Entity',
+                            'revision' => 0
+                        ]);
+
+                        if (!array_key_exists($field->name, $fieldNames)) {
+                            $fieldNames[$field->name] = $field->type;
+                        }
+
+                        if ($fv->count() > 1) {
+                            $rows[$i][$field->name] = [];
+                            foreach ($fv->rows() as $f) {
+
+                                $rows[$i][$field->name][] = $f->value;
+                            }
+                        } else {
+                            $rows[$i][$field->name] = $fv->value;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $fieldNames;
     }
 
 
@@ -99,7 +165,7 @@ class Entity extends AbstractModel
      */
     public function getAllForExport()
     {
-        $rows = $this->getAll()['rows'];
+        $rows = $this->getAll();
 
         foreach ($rows as $key => $value) {
             foreach($value as $k => $v) {
@@ -132,8 +198,7 @@ class Entity extends AbstractModel
 
         if (isset($entityType->id)) {
             $this->tid = $entityType->id;
-            $entities  = $this->getAll($limit, $page, $sort);
-            $rows      = $entities['rows'];
+            $rows      = $this->getAll($limit, $page, $sort);
         }
 
         return $rows;
