@@ -11,26 +11,42 @@ class Entity extends AbstractModel
     /**
      * Get all entities
      *
+     * @param  int    $typeId
      * @param  int    $limit
      * @param  int    $page
      * @param  string $sort
      * @return array
      */
-    public function getAll($limit = null, $page = null, $sort = null)
+    public function getAll($typeId = null, $limit = null, $page = null, $sort = null)
     {
         $order = (null !== $sort) ? $this->getSortOrder($sort, $page) : 'id ASC';
 
-        if (null !== $limit) {
-            $page = ((null !== $page) && ((int)$page > 1)) ?
-                ($page * $limit) - $limit : null;
+        if (null !== $typeId) {
+            if (null !== $limit) {
+                $page = ((null !== $page) && ((int)$page > 1)) ?
+                    ($page * $limit) - $limit : null;
 
-            $rows = Table\Entities::findBy(['type_id' => $this->tid], [
-                'offset' => $page,
-                'limit'  => $limit,
-                'order'  => $order
-            ])->rows();
+                $rows = Table\Entities::findBy(['type_id' => $typeId], [
+                    'offset' => $page,
+                    'limit'  => $limit,
+                    'order'  => $order
+                ])->rows();
+            } else {
+                $rows = Table\Entities::findBy(['type_id' => $typeId], ['order' => $order])->rows();
+            }
         } else {
-            $rows = Table\Entities::findBy(['type_id' => $this->tid], ['order' => $order])->rows();
+            if (null !== $limit) {
+                $page = ((null !== $page) && ((int)$page > 1)) ?
+                    ($page * $limit) - $limit : null;
+
+                $rows = Table\Entities::findAll([
+                    'offset' => $page,
+                    'limit'  => $limit,
+                    'order'  => $order
+                ])->rows();
+            } else {
+                $rows = Table\Entities::findAll(['order' => $order])->rows();
+            }
         }
 
         $fieldNames = [];
@@ -46,42 +62,45 @@ class Entity extends AbstractModel
                 $fields = \Phire\Fields\Table\Fields::execute((string)$sql, ['models' => $value]);
 
                 foreach ($fields->rows() as $field) {
-                    if ($field->storage == 'eav') {
-                        $fv = \Phire\Fields\Table\FieldValues::findBy([
-                            'field_id' => $field->id,
-                            'model_id' => $row->id,
-                            'model'    => 'Phire\Entities\Model\Entity'
-                        ]);
-                        foreach ($fv->rows() as $fv) {
+                    $field->models = unserialize($field->models);
+                    if ($this->isFieldAllowed($field->models, $row)) {
+                        if ($field->storage == 'eav') {
+                            $fv = \Phire\Fields\Table\FieldValues::findBy([
+                                'field_id' => $field->id,
+                                'model_id' => $row->id,
+                                'model' => 'Phire\Entities\Model\Entity'
+                            ]);
+                            foreach ($fv->rows() as $fv) {
+                                if (!array_key_exists($field->name, $fieldNames)) {
+                                    $fieldNames[$field->name] = $field->type;
+                                }
+                                $rows[$i][$field->name] = json_decode($fv->value, true);
+                            }
+                        } else {
+                            $fv = new \Pop\Db\Record();
+                            $fv->setPrefix(DB_PREFIX)
+                                ->setPrimaryKeys(['id'])
+                                ->setTable('field_' . $field->name);
+
+                            $fv->findRecordsBy([
+                                'model_id' => $row->id,
+                                'model' => 'Phire\Entities\Model\Entity',
+                                'revision' => 0
+                            ]);
+
                             if (!array_key_exists($field->name, $fieldNames)) {
                                 $fieldNames[$field->name] = $field->type;
                             }
-                            $rows[$i][$field->name]   = json_decode($fv->value, true);
-                        }
-                    } else {
-                        $fv = new \Pop\Db\Record();
-                        $fv->setPrefix(DB_PREFIX)
-                            ->setPrimaryKeys(['id'])
-                            ->setTable('field_' . $field->name);
 
-                        $fv->findRecordsBy([
-                            'model_id' => $row->id,
-                            'model'    => 'Phire\Entities\Model\Entity',
-                            'revision' => 0
-                        ]);
+                            if ($fv->count() > 1) {
+                                $rows[$i][$field->name] = [];
+                                foreach ($fv->rows() as $f) {
 
-                        if (!array_key_exists($field->name, $fieldNames)) {
-                            $fieldNames[$field->name] = $field->type;
-                        }
-
-                        if ($fv->count() > 1) {
-                            $rows[$i][$field->name] = [];
-                            foreach ($fv->rows() as $f) {
-
-                                $rows[$i][$field->name][] = $f->value;
+                                    $rows[$i][$field->name][] = $f->value;
+                                }
+                            } else {
+                                $rows[$i][$field->name] = $fv->value;
                             }
-                        } else {
-                            $rows[$i][$field->name] = $fv->value;
                         }
                     }
                 }
@@ -112,42 +131,45 @@ class Entity extends AbstractModel
                 $fields = \Phire\Fields\Table\Fields::execute((string)$sql, ['models' => $value]);
 
                 foreach ($fields->rows() as $field) {
-                    if ($field->storage == 'eav') {
-                        $fv = \Phire\Fields\Table\FieldValues::findBy([
-                            'field_id' => $field->id,
-                            'model_id' => $row->id,
-                            'model'    => 'Phire\Entities\Model\Entity'
-                        ]);
-                        foreach ($fv->rows() as $fv) {
+                    $field->models = unserialize($field->models);
+                    if ($this->isFieldAllowed($field->models, $row)) {
+                        if ($field->storage == 'eav') {
+                            $fv = \Phire\Fields\Table\FieldValues::findBy([
+                                'field_id' => $field->id,
+                                'model_id' => $row->id,
+                                'model' => 'Phire\Entities\Model\Entity'
+                            ]);
+                            foreach ($fv->rows() as $fv) {
+                                if (!array_key_exists($field->name, $fieldNames)) {
+                                    $fieldNames[$field->name] = $field->type;
+                                }
+                                $rows[$i][$field->name] = json_decode($fv->value, true);
+                            }
+                        } else {
+                            $fv = new \Pop\Db\Record();
+                            $fv->setPrefix(DB_PREFIX)
+                                ->setPrimaryKeys(['id'])
+                                ->setTable('field_' . $field->name);
+
+                            $fv->findRecordsBy([
+                                'model_id' => $row->id,
+                                'model' => 'Phire\Entities\Model\Entity',
+                                'revision' => 0
+                            ]);
+
                             if (!array_key_exists($field->name, $fieldNames)) {
                                 $fieldNames[$field->name] = $field->type;
                             }
-                            $rows[$i][$field->name]   = json_decode($fv->value, true);
-                        }
-                    } else {
-                        $fv = new \Pop\Db\Record();
-                        $fv->setPrefix(DB_PREFIX)
-                            ->setPrimaryKeys(['id'])
-                            ->setTable('field_' . $field->name);
 
-                        $fv->findRecordsBy([
-                            'model_id' => $row->id,
-                            'model'    => 'Phire\Entities\Model\Entity',
-                            'revision' => 0
-                        ]);
+                            if ($fv->count() > 1) {
+                                $rows[$i][$field->name] = [];
+                                foreach ($fv->rows() as $f) {
 
-                        if (!array_key_exists($field->name, $fieldNames)) {
-                            $fieldNames[$field->name] = $field->type;
-                        }
-
-                        if ($fv->count() > 1) {
-                            $rows[$i][$field->name] = [];
-                            foreach ($fv->rows() as $f) {
-
-                                $rows[$i][$field->name][] = $f->value;
+                                    $rows[$i][$field->name][] = $f->value;
+                                }
+                            } else {
+                                $rows[$i][$field->name] = $fv->value;
                             }
-                        } else {
-                            $rows[$i][$field->name] = $fv->value;
                         }
                     }
                 }
@@ -161,11 +183,12 @@ class Entity extends AbstractModel
     /**
      * Get all entities for export
      *
+     * @param  int $typeId
      * @return array
      */
-    public function getAllForExport()
+    public function getAllForExport($typeId = null)
     {
-        $rows = $this->getAll();
+        $rows = $this->getAll($typeId);
 
         foreach ($rows as $key => $value) {
             foreach($value as $k => $v) {
@@ -197,8 +220,7 @@ class Entity extends AbstractModel
         $rows = [];
 
         if (isset($entityType->id)) {
-            $this->tid = $entityType->id;
-            $rows      = $this->getAll($limit, $page, $sort);
+            $rows = $this->getAll($entityType->id, $limit, $page, $sort);
         }
 
         return $rows;
@@ -309,25 +331,49 @@ class Entity extends AbstractModel
      * Determine if list of entities has pages
      *
      * @param  int $limit
+     * @param  int $typeId
      * @return boolean
      */
-    public function hasPages($limit)
+    public function hasPages($limit, $typeId = null)
     {
-        return (isset($this->data['tid'])) ?
-            (Table\Entities::findBy(['type_id' => $this->data['tid']])->count() > $limit) :
+        return (null !== $typeId) ?
+            (Table\Entities::findBy(['type_id' => $typeId])->count() > $limit) :
             (Table\Entities::findAll()->count() > $limit);
     }
 
     /**
      * Get count of entities
      *
+     * @param  int $typeId
      * @return int
      */
-    public function getCount()
+    public function getCount($typeId = null)
     {
-        return (isset($this->data['tid'])) ?
-            Table\Entities::findBy(['type_id' => $this->data['tid']])->count() :
+        return (null !== $typeId) ?
+            Table\Entities::findBy(['type_id' => $typeId])->count() :
             Table\Entities::findAll()->count();
+    }
+
+    /**
+     * Determine if the field is allowed for the entity type
+     *
+     * @param  array $models
+     * @param  mixed $entity
+     * @return boolean
+     */
+    public function isFieldAllowed($models, $entity)
+    {
+        $result = false;
+        foreach ($models as $model) {
+            if (!empty($model['type_field']) && !empty($model['type_value']) &&
+                isset($entity[$model['type_field']]) && ($entity[$model['type_field']] == $model['type_value'])) {
+                $result = true;
+            } else if (empty($model['type_field']) && empty($model['type_value'])) {
+                $result = true;
+            }
+        }
+
+        return $result;
     }
 
 }

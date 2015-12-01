@@ -40,7 +40,7 @@ class IndexController extends AbstractController
             );
         } else {
             $this->prepareView('entities/index.phtml');
-            $entities = new Model\Entity(['tid' => $tid]);
+            $entities = new Model\Entity();
             $type     = new Model\EntityType();
             $type->getById($tid);
 
@@ -49,9 +49,9 @@ class IndexController extends AbstractController
             }
 
             if ($this->services['acl']->isAllowed($this->sess->user->role, 'entity-type-' . $type->id, 'index')) {
-                if ($entities->hasPages($this->config->pagination)) {
+                if ($entities->hasPages($this->config->pagination, $tid)) {
                     $limit = $this->config->pagination;
-                    $pages = new Paginator($entities->getCount(), $limit);
+                    $pages = new Paginator($entities->getCount($tid), $limit);
                     $pages->useInput(true);
                 } else {
                     $limit = null;
@@ -59,7 +59,7 @@ class IndexController extends AbstractController
                 }
 
                 $ents = $entities->getAll(
-                    $limit, $this->request->getQuery('page'), $this->request->getQuery('sort')
+                    $tid, $limit, $this->request->getQuery('page'), $this->request->getQuery('sort')
                 );
 
                 $this->view->title    = 'Entities : ' . $type->name;
@@ -184,7 +184,7 @@ class IndexController extends AbstractController
         }
 
         if ($this->services['acl']->isAllowed($this->sess->user->role, 'entity-type-' . $type->id, 'export')) {
-            $rows = $entities->getAllForExport();
+            $rows = $entities->getAllForExport($tid);
             $data = new Data($rows);
             $data->serialize('csv', ['omit' => 'type_id']);
             $data->outputToHttp($type->name . '_' . date('Y-m-d') . '.csv');
