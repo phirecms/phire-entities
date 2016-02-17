@@ -43,8 +43,8 @@ foreach ($fields as $name => $type):
 ?>
                 <td><?php
 if (isset($entity[$name])):
-    if ($type == 'file'):
-        $size = filesize($_SERVER['DOCUMENT_ROOT'] . BASE_PATH. CONTENT_PATH . '/assets/phire-fields' . (class_exists('Phire\FieldsPlus\Model\Field') ? '-plus' : '') . '/files/' . $entity[$name]);
+    if (($type == 'file') && !empty($entity[$name]) && file_exists($_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/files/' . $entity[$name])):
+        $size = filesize($_SERVER['DOCUMENT_ROOT'] . BASE_PATH. CONTENT_PATH . '/files/' . $entity[$name]);
         if ($size >= 1000000):
             $size = round(($size / 1000000), 2) . ' MB';
         elseif (($size < 1000000) && ($size >= 1000)):
@@ -52,7 +52,7 @@ if (isset($entity[$name])):
         else:
             $size .= ' B';
         endif;
-        $fv   = '<a class="normal-link" href="' . BASE_PATH. CONTENT_PATH . '/assets/phire-fields' . (class_exists('Phire\FieldsPlus\Model\Field') ? '-plus' : '') . '/files/' . $entity[$name] . '" target="_blank">' . $entity[$name] . '</a> (' . $size . ')';
+        $fv   = '<a class="normal-link" href="' . BASE_PATH. CONTENT_PATH . '/files/' . $entity[$name] . '" target="_blank">' . $entity[$name] . '</a> (' . $size . ')';
     else:
         $fv = (is_array($entity[$name]) ? implode(', ', $entity[$name]) : $entity[$name]);
         if (strlen($fv) > 60):
