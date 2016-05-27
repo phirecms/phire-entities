@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * phire-entities form configuration
+ */
 return [
     'Phire\Entities\Form\Entity' => [
         [

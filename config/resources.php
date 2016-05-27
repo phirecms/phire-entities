@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * phire-entities resources
+ */
 return [
     'entities' => [
         'index',

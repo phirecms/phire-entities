@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * phire-entities routes
+ */
 return [
     APP_URI => [
         '/entities[/:tid]' => [
