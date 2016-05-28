@@ -86,7 +86,7 @@
 .entities-nav-icon:before {
     font-family: "FontAwesome";
     font-weight: normal;
-    content: "\f0ca";
+    content: "\f022";
     display: inline-block;
     margin: 0;
     padding: 0 5px 0 0;
@@ -105,7 +105,7 @@
 .entities-header:before {
     font-family: "FontAwesome";
     font-weight: normal;
-    content: "\f0ca";
+    content: "\f022";
     margin: 0;
     padding: 0 8px 0 0;
     color: #b4b5b4;
