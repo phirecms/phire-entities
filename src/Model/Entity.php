@@ -209,18 +209,19 @@ class Entity extends AbstractModel
      */
     public function getAllForExport($typeId = null)
     {
-        $rows = $this->getAll($typeId);
-
-        foreach ($rows as $key => $value) {
+        $rows      = $this->getAll($typeId);
+        $arrayRows = [];
+        foreach ($rows as $value) {
+            $value = $value->getColumns();
             foreach($value as $k => $v) {
                 if (is_array($v)) {
                     $value[$k] = implode(', ', $v);
                 }
             }
-            $rows[$key] = (array)$value;
+            $arrayRows[] = (array)$value;
         }
 
-        return $rows;
+        return $arrayRows;
     }
 
     /**
